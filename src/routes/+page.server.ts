@@ -1,11 +1,9 @@
-import { db } from '$lib/server/db';
-import { books } from '$lib/server/db/schema';
+import { getAllBooks } from '$lib/server/query/book';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
-  const allBooks = await db.select().from(books).all();
-  
+  const allBooks = await getAllBooks();
   return {
-    books: allBooks
+    allBooks
   };
 };

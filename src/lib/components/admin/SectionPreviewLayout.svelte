@@ -2,7 +2,7 @@
 	const size = 12;
 </script>
 
-<div class="relative flex-1 overflow-y-auto">
+<div class="relative flex-1">
 	<div class="absolute top-0 left-0">
 		<svg width="40" height="40" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<rect y="29" width="29" height="29" fill="#0cc0cf" />
@@ -20,7 +20,7 @@
 	</div>
 
 	<div>
-		<div class="pt-14 pb-12 px-6">
+		<div class="min-h-[calc(100vh-6rem)] px-6 pt-14 pb-12">
 			<slot></slot>
 		</div>
 		<div class="relative flex w-full justify-end">

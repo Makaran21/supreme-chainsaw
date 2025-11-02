@@ -36,6 +36,11 @@ export async function getBookWithContent(bookId: number) {
 	return book;
 }
 
+export async function getAllBooks()	{
+	const allBooks = await db.select().from(books).all();
+	return allBooks;
+}
+
 export async function updateBook(bookId: number, data: {
 	title?: string;
 	description?: string;

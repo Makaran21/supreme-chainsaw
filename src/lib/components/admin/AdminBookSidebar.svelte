@@ -472,8 +472,14 @@
 														Rename chapter
 													</DropdownMenu.Item>
 													<DropdownMenu.Item
+														disabled={chapter.sections.length > 0}
 														onclick={() => deleteChapter(chapter.id)}
-														class="text-destructive focus:text-destructive"
+														class={cn(
+															'focus:text-destructive',
+															chapter.sections.length > 0
+																? 'cursor-not-allowed text-muted-foreground'
+																: 'text-destructive'
+														)}
 													>
 														<Trash2 class="mr-2 h-3 w-3" />
 														Delete chapter

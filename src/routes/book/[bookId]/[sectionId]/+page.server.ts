@@ -1,24 +1,8 @@
-// src/routes/book/[bookId]/[sectionId]/+page.server.ts
-import { db } from '$lib/server/db';
-import { sections } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { getSectionById } from "$lib/server/query/book"
 
-
-export const load = async ({ params }) => {
-	const sectionId = Number(params.sectionId);
-
-	const section = await db
-		.select()
-		.from(sections)
-		.where(eq(sections.id, sectionId))
-		.get(); // or .then(rows => rows[0]) depending on your Drizzle client
-
-	if (!section) {
-		return {
-			status: 404,
-			error: new Error('Section not found')
-		};
+export async function load({ params }) {
+	const section = await getSectionById(Number(params.sectionId))
+	return {
+		section
 	}
-
-	return { section, markdownContent: '' };
-};
+}

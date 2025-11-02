@@ -8,6 +8,27 @@
       "when": 1761817027284,
       "tag": "0000_crazy_sleeper",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1761974926287,
+      "tag": "0001_gray_nico_minoru",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1762059344939,
+      "tag": "0002_empty_wendell_vaughn",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1762094206455,
+      "tag": "0003_mighty_queen_noir",
+      "breakpoints": true
     }
   ]
 }
