@@ -1,5 +1,5 @@
+import { type Icon } from '@lucide/svelte';
 import type { Editor } from '@tiptap/core';
-import { Icon } from '@lucide/svelte';
 
 export interface EdraToolBarCommands {
 	name: string;

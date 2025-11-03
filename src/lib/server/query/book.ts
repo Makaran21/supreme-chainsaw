@@ -1,7 +1,7 @@
+import type { Content } from '@tiptap/core';
 import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { books, chapters, sections, type Block, type Chapter, type Section } from '../db/schema';
-import type { Content } from '@tiptap/core';
 
 export type BookWithContent = Awaited<ReturnType<typeof getBookWithContent>>;
 
@@ -36,9 +36,29 @@ export async function getBookWithContent(bookId: number) {
 	return book;
 }
 
-export async function getAllBooks()	{
+export async function getAllBooks() {
 	const allBooks = await db.select().from(books).all();
 	return allBooks;
+}
+
+export async function getAllBooksForHomePage() {
+	const booksWithProgress = await db.query.books.findMany({
+		with: {
+			readingProgress: {
+				where: (progress, { eq }) => eq(progress.userId, '2')
+			}
+		}
+	});
+
+	return booksWithProgress.map(book => {
+		const progressEntry = book.readingProgress[0];
+		const progress = progressEntry ? progressEntry : null;
+
+		return {
+			...book,
+			readingProgress: progress
+		};
+	});
 }
 
 export async function updateBook(bookId: number, data: {
@@ -94,10 +114,10 @@ export async function addChapters(chapterList: Array<{
 
 // Add section
 export async function addSection(data: Section) {
-	if (data.id) delete data.id
+	const { id, ...fields } = data
 	const [section] = await db
 		.insert(sections)
-		.values(data)
+		.values(fields)
 		.returning();
 
 	return section;
@@ -250,7 +270,7 @@ export async function renameSection(section: Section) {
 export async function updateSectionContent(sectionId: number, content: Content) {
 	const result = await db
 		.update(sections)
-		.set({ content})
+		.set({ content })
 		.where(eq(sections.id, sectionId))
 		.returning({ id: sections.id, title: sections.title });
 

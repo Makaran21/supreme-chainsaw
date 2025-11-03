@@ -66,6 +66,7 @@
 	"dependencies": {
 		"@aarkue/tiptap-math-extension": "^1.4.0",
 		"@floating-ui/dom": "^1.7.4",
+		"@node-rs/argon2": "^2.0.2",
 		"@tiptap/core": "^3.8.0",
 		"@tiptap/extension-bubble-menu": "^3.8.0",
 		"@tiptap/extension-code-block-lowlight": "^3.8.0",

@@ -29,6 +29,41 @@
       "when": 1762094206455,
       "tag": "0003_mighty_queen_noir",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1762096931502,
+      "tag": "0004_sweet_purifiers",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1762140643187,
+      "tag": "0005_dusty_raider",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1762141197695,
+      "tag": "0006_purple_havok",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1762141264414,
+      "tag": "0007_flat_rattler",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1762141278619,
+      "tag": "0008_whole_kid_colt",
+      "breakpoints": true
     }
   ]
 }

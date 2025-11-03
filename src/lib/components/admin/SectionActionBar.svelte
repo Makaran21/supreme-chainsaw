@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { Eye, Pencil, Save } from '@lucide/svelte';
+	import Eye from '@lucide/svelte/icons/eye';
+	import Pencil from '@lucide/svelte/icons/pencil';
+	import Save from '@lucide/svelte/icons/save';
+
 	import type { Content } from '@tiptap/core';
 
 	export let content: Content | undefined;

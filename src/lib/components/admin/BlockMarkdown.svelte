@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
 	import { EdraDragHandleExtended, EdraEditor, EdraToolBar } from '$lib/components/edra/shadcn';
+	import { Button } from '$lib/components/ui/button';
 	import type { Block } from '$lib/server/db/schema';
+	import Eye from '@lucide/svelte/icons/eye';
+	import Pencil from '@lucide/svelte/icons/pencil';
 	import type { Content, Editor } from '@tiptap/core';
-	import { Eye, Pencil } from '@lucide/svelte';
 
 	interface Props {
 		block: Block;
@@ -28,7 +29,7 @@
 
 	function handleUpdate() {
 		if (editor) {
-      content = editor?.getJSON();
+			content = editor?.getJSON();
 		}
 	}
 </script>
@@ -64,7 +65,7 @@
 		</div>
 	{:else}
 		<div>
-			<EdraEditor content={content} editable={false} class="prose prose-slate max-w-none" />
+			<EdraEditor {content} editable={false} class="prose prose-slate max-w-none" />
 		</div>
 	{/if}
 </div>

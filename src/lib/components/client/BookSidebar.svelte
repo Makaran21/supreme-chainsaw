@@ -5,7 +5,9 @@
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import type { BookWithContent } from '$lib/server/query/book';
 	import { cn } from '$lib/utils';
-	import { BookOpen, Search, X } from '@lucide/svelte';
+	import Search from '@lucide/svelte/icons/search';
+	import X from '@lucide/svelte/icons/x';
+	import ToggleSidebar from './ToggleSidebar.svelte';
 
 	interface Section {
 		id: number;
@@ -84,20 +86,24 @@
 <Sidebar.Root>
 	<Sidebar.Content class="min-w-88 overflow-hidden">
 		<Sidebar.Group>
-			<Sidebar.GroupLabel class=" absolute top-[2rem] z-50 w-88 pr-4 pl-0">
-				<div class="flex w-full flex-col gap-2 rounded bg-background p-2 shadow">
-					<div class="flex items-center gap-2">
-						<BookOpen class="h-5 w-5" />
-						<span class="truncate">{menuData.bookTitle}</span>
+			<Sidebar.GroupLabel class=" absolute top-10 z-50 w-88 pr-4 pl-0">
+				<div class="flex w-full flex-col gap-2 rounded bg-background px-2 py-3 shadow">
+					<div class="flex flex-row items-center justify-between gap-2">
+						<div class="flex grow items-center justify-start pl-1">
+							<span class="truncate text-base font-bold">{menuData.bookTitle}</span>
+						</div>
+						<ToggleSidebar />
 					</div>
 
 					<div class="relative">
-						<Search class="absolute top-4 left-2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+						<Search
+							class="absolute top-4.5 left-2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+						/>
 						<Input
 							type="text"
 							placeholder="Search chapters and sections..."
 							bind:value={searchQuery}
-							class="h-9 pr-8 pl-8"
+							class="h-9 rounded pr-8 pl-8"
 						/>
 						{#if searchQuery}
 							<button
@@ -117,7 +123,7 @@
 					{/if}
 				</div>
 			</Sidebar.GroupLabel>
-			<Sidebar.GroupContent class="mt-22 h-[calc(100vh-7rem)] w-full overflow-y-auto">
+			<Sidebar.GroupContent class="mt-26 h-[calc(100vh-7rem)] w-full overflow-y-auto">
 				<Sidebar.Menu class="w-full">
 					{#if filteredChapters.length === 0}
 						<div class="p-4 text-center text-sm text-muted-foreground">
@@ -125,11 +131,11 @@
 						</div>
 					{:else}
 						<div class="space-y-1">
-							{#each filteredChapters as chapter (chapter.id)}
-								<div class="rounded border p-1 pb-3">
+							{#each filteredChapters as chapter, index (chapter.id)}
+								<div class="rounded border p-1 py-2">
 									<Sidebar.MenuItem>
 										<div class="flex w-full items-center">
-											<Sidebar.MenuButton class="flex-1">
+											<Sidebar.MenuButton class="flex-1" aria-disabled={index >= 4}>
 												<Tooltip.Provider>
 													<Tooltip.Root>
 														<Tooltip.Trigger class="flex w-full min-w-0 items-center gap-2">
@@ -147,9 +153,10 @@
 												{#each chapter.sections as section (section.id)}
 													<Sidebar.MenuSubItem>
 														<Sidebar.MenuSubButton
+															aria-disabled={index >= 4}
 															href={`/book/${menuData.id}/${section.id}`}
 															class={cn(
-																'flex-1 truncate',
+																'h-11 flex-1 truncate sm:h-8',
 																currentSectionId === section.id && 'bg-accent font-medium'
 															)}
 															onclick={() => {
@@ -160,7 +167,9 @@
 														>
 															<Tooltip.Provider>
 																<Tooltip.Root>
-																	<Tooltip.Trigger class="flex w-full min-w-0 items-center gap-2">
+																	<Tooltip.Trigger
+																		class="flex w-full min-w-0 items-center gap-2 hover:cursor-pointer"
+																	>
 																		<span class="truncate">{section.sectionTitle}</span>
 																	</Tooltip.Trigger>
 																	<Tooltip.Content>

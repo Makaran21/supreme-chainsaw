@@ -1,34 +1,39 @@
-<script>
+<script lang="ts">
 	import ToggleSidebar from "$lib/components/client/ToggleSidebar.svelte";
 	import { Button } from "$lib/components/ui/button";
-	import { ArrowLeft } from "@lucide/svelte";
+	import { ArrowLeft, BookOpen } from "@lucide/svelte";
 
+	export let data
+
+	const { book } = data;
 </script>
+
 <!-- /routes/book/[bookId]/+page.svelte -->
 
-<div class="flex w-full items-center justify-between pt-4">
-	<ToggleSidebar title={"Select a page"} class="mx-4" />
-	<Button href="/" variant="link">
+<div class="flex w-full items-center justify-end border-b border-gray-200 bg-background/80 px-2 py-2 backdrop-blur-sm">
+	<ToggleSidebar hideWhenOpen class="font-semibold text-lg text-foreground/80" />
+	<Button href="/" variant="link" class="text-black">
 		<ArrowLeft />
-		Back to home page
+		ទំព័រដើម
 	</Button>
 </div>
-<div class="container mx-auto px-4 py-4">
-	<div class="rounded-lg bg-white p-12 text-center shadow-sm">
-		<svg
-			class="mx-auto mb-4 h-24 w-24 text-gray-400"
-			fill="none"
-			viewBox="0 0 24 24"
-			stroke="currentColor"
-		>
-			<path
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				stroke-width="2"
-				d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-			/>
-		</svg>
-		<h2 class="mb-2 text-2xl font-semibold text-gray-900">Start Reading</h2>
-		<p class="text-gray-600">Select a section from the table of contents to begin reading.</p>
+
+<section class="flex min-h-[100vh - 6rem] items-center justify-center p-4">
+	<div class="mx-auto w-full rounded border border-gray-200 bg-card p-10 text-center shadow-sm transition-shadow hover:shadow-md">
+		<div class="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-muted">
+			<BookOpen class="h-12 w-12" />
+		</div>
+
+		<h2 class="mb-3 text-3xl font-bold tracking-tight text-foreground">
+			Start Reading
+		</h2>
+
+		<p class="mb-8 text-muted-foreground">
+			Select a section from the table of contents to begin your journey.
+		</p>
+
+		<Button href="/book/{book.id}/{book.chapters[0].id}" variant="default" class="mx-auto mt-2">
+			Start Reading
+		</Button>
 	</div>
-</div>
+</section>

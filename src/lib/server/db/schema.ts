@@ -5,6 +5,8 @@ import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
 	username: text('username').notNull().unique(),
+	phone: text('phone').notNull().unique(),
+	password: text('password').notNull(),
 	age: integer('age')
 });
 
@@ -21,6 +23,7 @@ export const books = sqliteTable('books', {
 	title: text('title').notNull(),
 	description: text('description').notNull(),
 	coverImage: text('cover_image'),
+	publishedAt: integer('published_at', { mode: 'timestamp' }),
 	price: integer('price'), // price in cents, null for free books
 	isFree: integer('is_free', { mode: 'boolean' }).notNull().default(false)
 });
@@ -89,6 +92,8 @@ export const blogPosts = sqliteTable('blog_posts', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	authorId: text('author_id').notNull().references(() => user.id),
 	title: text('title').notNull(),
+	category: text('category').notNull(),
+	readTime: integer('read_time').notNull(),
 	slug: text('slug').notNull().unique(),
 	content: text('content', { mode: 'json' }).$type<Content>().notNull(),
 	excerpt: text('excerpt'),
@@ -250,15 +255,119 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
 	replies: many(comments)
 }));
 
-// Type exports
-export type Book = typeof books.$inferInsert;
-export type Chapter = typeof chapters.$inferInsert;
-export type Section = typeof sections.$inferInsert;
+
+// Basic table types (without relations)
+export type Book = typeof books.$inferSelect;
+export type BookInsert = typeof books.$inferInsert;
+export type Chapter = typeof chapters.$inferSelect;
+export type ChapterInsert = typeof chapters.$inferInsert;
+export type Section = typeof sections.$inferSelect;
+export type SectionInsert = typeof sections.$inferInsert;
 export type Session = typeof session.$inferSelect;
 export type User = typeof user.$inferSelect;
-export type UserBookPurchase = typeof userBookPurchases.$inferInsert;
-export type UserReadingProgress = typeof userReadingProgress.$inferInsert;
-export type BlogPost = typeof blogPosts.$inferInsert;
-export type CommentSection = typeof commentSections.$inferInsert;
-export type Comment = typeof comments.$inferInsert;
-export type ReaderActivityLog = typeof readerActivityLog.$inferInsert;
+export type UserInsert = typeof user.$inferInsert;
+export type UserBookPurchase = typeof userBookPurchases.$inferSelect;
+export type UserBookPurchaseInsert = typeof userBookPurchases.$inferInsert;
+export type UserReadingProgress = typeof userReadingProgress.$inferSelect;
+export type UserReadingProgressInsert = typeof userReadingProgress.$inferInsert;
+export type BlogPost = typeof blogPosts.$inferSelect;
+export type BlogPostInsert = typeof blogPosts.$inferInsert;
+export type CommentSection = typeof commentSections.$inferSelect;
+export type CommentSectionInsert = typeof commentSections.$inferInsert;
+export type Comment = typeof comments.$inferSelect;
+export type CommentInsert = typeof comments.$inferInsert;
+export type ReaderActivityLog = typeof readerActivityLog.$inferSelect;
+export type ReaderActivityLogInsert = typeof readerActivityLog.$inferInsert;
+
+// Relation types - use these when you query with relations included
+export type UserWithRelations = User & {
+	sessions?: Session[];
+	purchases?: UserBookPurchase[];
+	readingProgress?: UserReadingProgress[];
+	blogPosts?: BlogPost[];
+	comments?: Comment[];
+	activityLogs?: ReaderActivityLog[];
+};
+
+export type BookWithRelations = Book & {
+	chapters?: Chapter[];
+	purchases?: UserBookPurchase[];
+	readingProgress?: UserReadingProgress[];
+	commentSections?: CommentSection[];
+};
+
+export type ChapterWithRelations = Chapter & {
+	book?: Book;
+	sections?: Section[];
+	readingProgress?: UserReadingProgress[];
+	commentSections?: CommentSection[];
+};
+
+export type SectionWithRelations = Section & {
+	chapter?: Chapter;
+	readingProgress?: UserReadingProgress[];
+	activityLogs?: ReaderActivityLog[];
+};
+
+export type BlogPostWithRelations = BlogPost & {
+	author?: User;
+	commentSections?: CommentSection[];
+	activityLogs?: ReaderActivityLog[];
+};
+
+export type CommentSectionWithRelations = CommentSection & {
+	blogPost?: BlogPost;
+	book?: Book;
+	chapter?: Chapter;
+	comments?: Comment[];
+};
+
+export type CommentWithRelations = Comment & {
+	commentSection?: CommentSection;
+	user?: User;
+	parentComment?: Comment;
+	replies?: Comment[];
+};
+
+export type ReaderActivityLogWithRelations = ReaderActivityLog & {
+	user?: User;
+	section?: Section;
+	blogPost?: BlogPost;
+};
+
+// Nested relation types - for deeper queries
+export type BookWithChaptersAndSections = Book & {
+	chapters?: (Chapter & {
+		sections?: Section[];
+	})[];
+};
+
+export type ChapterWithSectionsAndBook = Chapter & {
+	book?: Book;
+	sections?: Section[];
+};
+
+export type BlogPostWithAuthorAndComments = BlogPost & {
+	author?: User;
+	commentSections?: (CommentSection & {
+		comments?: (Comment & {
+			user?: User;
+			replies?: Comment[];
+		})[];
+	})[];
+};
+
+export type UserWithFullReadingData = User & {
+	readingProgress?: (UserReadingProgress & {
+		book?: Book;
+		chapter?: Chapter;
+		section?: Section;
+	})[];
+	purchases?: (UserBookPurchase & {
+		book?: Book;
+	})[];
+	activityLogs?: (ReaderActivityLog & {
+		section?: Section;
+		blogPost?: BlogPost;
+	})[];
+};

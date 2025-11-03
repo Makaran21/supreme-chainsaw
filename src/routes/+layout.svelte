@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
+	import HomePageNavigation from '$lib/components/client/HomeNavigation.svelte';
 
 	let { children } = $props();
 </script>

@@ -10,7 +10,8 @@ import {
   blogPosts,
   commentSections,
   comments,
-  readerActivityLog
+  readerActivityLog,
+  type BlogPost
 } from './schema';
 import type { Content } from '@tiptap/core';
 
@@ -300,7 +301,9 @@ async function seed() {
       publishedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
       createdAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
       updatedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-      tags: ['coding', 'best-practices', 'quality']
+      tags: ['coding', 'best-practices', 'quality'],
+      category: 'insights',
+      readTime: 0
     },
     {
       authorId: createdUsers[0].id,
@@ -313,7 +316,9 @@ async function seed() {
       publishedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
       createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
       updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-      tags: ['javascript', 'async', 'tutorial']
+      tags: ['javascript', 'async', 'tutorial'],
+      category: 'insights',
+      readTime: 0
     },
     {
       authorId: createdUsers[2].id,
@@ -326,7 +331,9 @@ async function seed() {
       publishedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
       createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
       updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-      tags: ['architecture', 'scalability', 'performance']
+      tags: ['architecture', 'scalability', 'performance'],
+      category: 'techniques',
+      readTime: 0
     },
     {
       authorId: createdUsers[3].id,
@@ -339,7 +346,9 @@ async function seed() {
       publishedAt: null,
       createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
       updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-      tags: ['trends', 'future', 'technology']
+      tags: ['trends', 'future', 'technology'],
+      category: 'knowledge',
+      readTime: 0
     }
   ];
 

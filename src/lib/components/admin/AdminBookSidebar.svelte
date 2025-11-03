@@ -10,18 +10,16 @@
 		OrderedChapterWithSections
 	} from '$lib/server/query/book';
 	import { cn } from '$lib/utils';
-	import {
-		ArrowUpDown,
-		BookOpen,
-		Edit2,
-		GripVertical,
-		MoreVertical,
-		Plus,
-		Save,
-		Search,
-		Trash2,
-		X
-	} from '@lucide/svelte';
+	import ArrowUpDown from '@lucide/svelte/icons/arrow-up-down';
+	import BookOpen from '@lucide/svelte/icons/book-open';
+	import Edit2 from '@lucide/svelte/icons/edit-2';
+	import GripVertical from '@lucide/svelte/icons/grip-vertical';
+	import MoreVertical from '@lucide/svelte/icons/more-vertical';
+	import Plus from '@lucide/svelte/icons/plus';
+	import Save from '@lucide/svelte/icons/save';
+	import Search from '@lucide/svelte/icons/search';
+	import Trash2 from '@lucide/svelte/icons/trash-2';
+	import X from '@lucide/svelte/icons/x';
 	import type { DndEvent } from 'svelte-dnd-action';
 	import { dndzone } from 'svelte-dnd-action';
 	import { flip } from 'svelte/animate';
@@ -127,7 +125,12 @@
 					operations.set(`section:move:${newSection.id}`, {
 						dataType: 'SECTION',
 						action: 'MOVE',
-						section: { ...newSection, title: newSection.sectionTitle, content: '' }
+						section: {
+							...newSection, title: newSection.sectionTitle, content: '',
+							tags: null,
+							nextSectionId: null,
+							blocks: null
+						}
 					});
 				}
 				return newSection;
@@ -179,13 +182,18 @@
 			chapterTitle,
 			bookId: menuData.id,
 			orderIndex: newOrderIndex - 1,
-			sections: []
+			sections: [],
+			tags: [],
+			nextChapterId: null
 		};
 		menuData.chapters = [...menuData.chapters, newChapter];
 		operations.set(`chapter:${newChapter.id}`, {
 			dataType: 'CHAPTER',
 			action: 'CREATE',
-			chapter: { ...newChapter, title: newChapter.chapterTitle }
+			chapter: {
+				...newChapter,
+				title: newChapter.chapterTitle
+			}
 		});
 	}
 
@@ -207,7 +215,11 @@
 			operations.set(`chapter:${chapterId}`, {
 				dataType: 'CHAPTER',
 				action: 'DELETE',
-				chapter: { ...chapter, title: chapter.chapterTitle }
+				chapter: {
+					...chapter, title: chapter.chapterTitle,
+					nextChapterId: null,
+					tags: null
+				}
 			});
 		}
 	}
@@ -220,7 +232,11 @@
 			operations.set(`chapter:${chapterId}`, {
 				dataType: 'CHAPTER',
 				action: 'RENAME',
-				chapter: { ...chapter, title: chapter.chapterTitle }
+				chapter: {
+					...chapter, title: chapter.chapterTitle,
+					nextChapterId: null,
+					tags: null
+				}
 			});
 		}
 	}
@@ -240,7 +256,12 @@
 			operations.set(`section:${newSection.id}`, {
 				dataType: 'SECTION',
 				action: 'CREATE',
-				section: { ...newSection, title: newSection.sectionTitle, content: '' }
+				section: {
+					...newSection, title: newSection.sectionTitle, content: '',
+					tags: null,
+					nextSectionId: null,
+					blocks: null
+				}
 			});
 		}
 	}
@@ -263,7 +284,12 @@
 			operations.set(`section:${sectionId}`, {
 				dataType: 'SECTION',
 				action: 'DELETE',
-				section: { ...section, title: section.sectionTitle, content: '' }
+				section: {
+					...section, title: section.sectionTitle, content: '',
+					tags: null,
+					nextSectionId: null,
+					blocks: null
+				}
 			});
 		}
 	}
@@ -278,7 +304,12 @@
 				operations.set(`section:rename:${sectionId}`, {
 					dataType: 'SECTION',
 					action: 'RENAME',
-					section: { ...section, title: section.sectionTitle, content: '' }
+					section: {
+						...section, title: section.sectionTitle, content: '',
+						tags: null,
+						nextSectionId: null,
+						blocks: null
+					}
 				});
 			}
 		}

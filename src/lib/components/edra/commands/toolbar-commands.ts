@@ -27,7 +27,7 @@ import Video from '@lucide/svelte/icons/video';
 import Audio from '@lucide/svelte/icons/audio-lines';
 import IFrame from '@lucide/svelte/icons/code-xml';
 import Table from '@lucide/svelte/icons/table';
-import { StickyNote } from '@lucide/svelte';
+import StickyNote from '@lucide/svelte/icons/sticky-note';
 
 const commands: Record<string, EdraToolBarCommands[]> = {
 	'undo-redo': [
@@ -408,7 +408,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 			onClick: (editor) => {
 				console.log(editor.chain().focus());
 				editor.chain().focus().insertSectionTitle().run();
-				
+
 			},
 			isActive: (editor) => editor.isActive('sectionTitle')
 		}
