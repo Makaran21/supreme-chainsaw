@@ -4,7 +4,8 @@
     export let post: BlogPost
 </script>
 
-<article
+<a href="/blog-post/{post.id}">
+	<article
 	class="group cursor-pointer rounded-xl border border-border bg-card p-6 shadow-xs transition-all hover:-translate-y-0.5 hover:shadow"
 >
 	<div class="mb-4 flex items-center justify-between">
@@ -23,3 +24,4 @@
 		{post.createdAt.toLocaleDateString()}
 	</div>
 </article>
+</a>

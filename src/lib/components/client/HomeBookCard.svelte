@@ -26,7 +26,7 @@
 
 <a
 	{href}
-	class="shadow-xs sanimate-[fadeIn_0.2s_ease-out] block cursor-pointer overflow-hidden rounded-xl border border-border bg-card duration-200 hover:-translate-y-0.5 hover:shadow-md"
+	class="shadow-xs group sanimate-[fadeIn_0.2s_ease-out] block cursor-pointer overflow-hidden rounded-xl border border-border bg-card duration-200 hover:-translate-y-0.5 hover:shadow-md"
 	onmouseenter={() => (isHovered = true)}
 	onmouseleave={() => (isHovered = false)}
 	aria-label="View details for {book.title}"
