@@ -21,11 +21,15 @@ export const session = sqliteTable('session', {
 export const books = sqliteTable('books', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	title: text('title').notNull(),
+	authorName: text('author_name'),
 	description: text('description').notNull(),
 	coverImage: text('cover_image'),
 	publishedAt: integer('published_at', { mode: 'timestamp' }),
-	price: integer('price'), // price in cents, null for free books
-	isFree: integer('is_free', { mode: 'boolean' }).notNull().default(false)
+	price: integer('price'),
+	isFree: integer('is_free', { mode: 'boolean' }).notNull().default(false),
+	fakeViewers: integer('fake_viewers'),
+	fakePurchases: integer('fake_purchases'),
+	useFakeData: integer('use_fake_data', { mode: 'boolean' }).notNull().default(true),
 });
 
 export const chapters = sqliteTable('chapters', {
@@ -91,6 +95,7 @@ export const userReadingProgress = sqliteTable('user_reading_progress', {
 export const blogPosts = sqliteTable('blog_posts', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	authorId: text('author_id').notNull().references(() => user.id),
+	authorName: text('author_name'),
 	title: text('title').notNull(),
 	category: text('category').notNull(),
 	readTime: integer('read_time').notNull(),
@@ -100,6 +105,9 @@ export const blogPosts = sqliteTable('blog_posts', {
 	coverImage: text('cover_image'),
 	published: integer('published', { mode: 'boolean' }).notNull().default(false),
 	publishedAt: integer('published_at', { mode: 'timestamp' }),
+	fakeViewers: integer('fake_viewers'),
+	fakePurchases: integer('fake_purchases'),
+	useFakeData: integer('use_fake_data', { mode: 'boolean' }).notNull().default(true),
 	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
 	tags: text('tags', { mode: 'json' }).$type<string[]>()

@@ -24,7 +24,7 @@
 	}
 </script>
 
-<div class={cn('flex gap-4', showPreview ? 'p-0 pt-4 sm:p-4' : 'h-[calc(100vh-3rem)] p-4')}>
+<div class={cn('flex gap-4 pt-4', showPreview ? 'p-0 pt-4 pr-4' : 'h-[calc(100vh-3rem)] pr-4')}>
 	<SectionActionBar {content} {showPreview} onTogglePreviewHandler={togglePreview} />
 	<SectionContentEditor bind:editor {content} {onUpdate} hidden={showPreview} />
 	{#if showPreview}

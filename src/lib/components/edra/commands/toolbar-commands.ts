@@ -400,19 +400,19 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 			isActive: (editor) => editor.isActive('table')
 		}
 	]
-	, sectionTitle: [
-		{
-			icon: StickyNote,
-			name: 'sectionTitle',
-			tooltip: 'Section Title',
-			onClick: (editor) => {
-				console.log(editor.chain().focus());
-				editor.chain().focus().insertSectionTitle().run();
+	// , sectionTitle: [
+	// 	{
+	// 		icon: StickyNote,
+	// 		name: 'sectionTitle',
+	// 		tooltip: 'Section Title',
+	// 		onClick: (editor) => {
+	// 			console.log(editor.chain().focus());
+	// 			editor.chain().focus().insertSectionTitle().run();
 
-			},
-			isActive: (editor) => editor.isActive('sectionTitle')
-		}
-	]
+	// 		},
+	// 		isActive: (editor) => editor.isActive('sectionTitle')
+	// 	}
+	// ]
 };
 
 export default commands;

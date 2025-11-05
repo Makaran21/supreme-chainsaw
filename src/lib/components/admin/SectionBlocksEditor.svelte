@@ -21,7 +21,7 @@
 	}
 
 	function logBlocksData() {
-		console.log('Current blocks data:', items);
+		// console.log('Current blocks data:', items);
 	}
 
 	function handleChange(data: CustomEvent<LayoutChangeDetail>) {

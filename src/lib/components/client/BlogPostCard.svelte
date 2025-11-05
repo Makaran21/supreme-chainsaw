@@ -5,7 +5,7 @@
 </script>
 
 <article
-	class="group cursor-pointer rounded-xl border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+	class="group cursor-pointer rounded-xl border border-border bg-card p-6 shadow-xs transition-all hover:-translate-y-0.5 hover:shadow"
 >
 	<div class="mb-4 flex items-center justify-between">
 		<span class="text-xs font-black tracking-widest text-primary uppercase">

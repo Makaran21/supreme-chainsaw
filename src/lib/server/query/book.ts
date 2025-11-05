@@ -1,7 +1,8 @@
 import type { Content } from '@tiptap/core';
-import { eq } from 'drizzle-orm';
+import { randomUUID } from 'crypto';
+import { count, countDistinct, eq } from 'drizzle-orm';
 import { db } from '../db';
-import { books, chapters, sections, type Block, type Chapter, type Section } from '../db/schema';
+import { books, chapters, sections, userBookPurchases, userReadingProgress, type Block, type BookInsert, type Chapter, type Section } from '../db/schema';
 
 export type BookWithContent = Awaited<ReturnType<typeof getBookWithContent>>;
 
@@ -15,6 +16,7 @@ export type BookDataOperation = {
 	section?: Section;
 	chapter?: Chapter;
 }
+
 
 export async function getBookWithContent(bookId: number) {
 	const book = await db.query.books.findFirst({
@@ -31,9 +33,45 @@ export async function getBookWithContent(bookId: number) {
 		}
 	});
 
-	if (!book) throw Error(`Book [ID: ${book}] not found`)
+	if (!book) throw Error(`Book [ID: ${bookId}] not found`);
 
-	return book;
+	const { purchases, viewers } = await getBookViewersAndPurchases(bookId)
+
+	return {
+		...book,
+		purchases,
+		viewers
+	};
+}
+
+export async function getBookViewersAndPurchases(bookId: number) {
+	const [purchases, viewers] = await Promise.all([
+		getBookPurchaseCount(bookId),
+		getBookViewerCount(bookId)
+	]);
+
+	return {
+		purchases,
+		viewers
+	}
+}
+
+export async function getBookPurchaseCount(bookId: number): Promise<number> {
+	const [result] = await db
+		.select({ count: count() })
+		.from(userBookPurchases)
+		.where(eq(userBookPurchases.bookId, bookId));
+
+	return result?.count ?? 0;
+}
+
+export async function getBookViewerCount(bookId: number): Promise<number> {
+	const [result] = await db
+		.select({ count: countDistinct(userReadingProgress.userId) })
+		.from(userReadingProgress)
+		.where(eq(userReadingProgress.bookId, bookId));
+
+	return result?.count ?? 0;
 }
 
 export async function getAllBooks() {
@@ -43,6 +81,7 @@ export async function getAllBooks() {
 
 export async function getAllBooksForHomePage() {
 	const booksWithProgress = await db.query.books.findMany({
+		where: (books, { isNotNull }) => isNotNull(books.publishedAt),
 		with: {
 			readingProgress: {
 				where: (progress, { eq }) => eq(progress.userId, '2')
@@ -61,11 +100,20 @@ export async function getAllBooksForHomePage() {
 	});
 }
 
-export async function updateBook(bookId: number, data: {
-	title?: string;
-	description?: string;
-	coverImage?: string;
-}) {
+export async function getAllBooksForAdminPage() {
+	const books = await db.query.books.findMany();
+
+	return books.map((item) => {
+		return {
+			...item,
+			id: item.id ?? randomUUID(),
+			viewers: 0,
+			purchases: 0
+		}
+	})
+}
+
+export async function updateBook(bookId: number, data: BookInsert) {
 	const [updatedBook] = await db
 		.update(books)
 		.set(data)
@@ -73,6 +121,15 @@ export async function updateBook(bookId: number, data: {
 		.returning();
 
 	return updatedBook;
+}
+
+export async function createBook(data: BookInsert) {
+	const [newBook] = await db
+		.insert(books)
+		.values(data)
+		.returning();
+
+	return newBook;
 }
 
 export async function getChaptersWithSectionByBookId(bookId: number) {

@@ -11,7 +11,6 @@
 	const allBooks = data.allBooks;
 
 	const blogPosts = data.blogPosts;
-	console.log(allBooks);
 </script>
 
 <HomePageLayout>

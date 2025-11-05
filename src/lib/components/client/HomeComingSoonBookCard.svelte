@@ -15,7 +15,7 @@
 </script>
 
 <div
-	class="group cursor-pointer overflow-hidden rounded-xl border border-border bg-card opacity-75 shadow-sm duration-200 hover:-translate-y-0.5 hover:shadow-md"
+	class="group cursor-pointer overflow-hidden rounded-xl border border-border bg-card opacity-75 shadow-xs duration-200 hover:-translate-y-0.5 hover:shadow-md"
 	role="button"
 	aria-label="Coming soon book card"
 	tabindex="0"
