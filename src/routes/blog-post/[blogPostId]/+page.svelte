@@ -192,27 +192,7 @@
 </script>
 
 <HomePageLayout>
-	<div class="min-h-screen bg-background">
-		<!-- Hero Section -->
-		<!-- <div
-			class="relative h-[180px] w-full overflow-hidden bg-linear-to-b from-muted to-background"
-		>
-			<img
-				src={post.coverImage}
-				alt={post.title}
-				class="absolute inset-0 h-full w-full object-cover opacity-20"
-			/>
-			<div
-				class="absolute inset-0 bg-linear-to-t from-background via-background/50 to-transparent"
-			></div>
-			<div class="absolute top-4 left-4">
-				<Button variant="ghost" size="icon" href="/" class="bg-background/80 backdrop-blur-sm">
-					<ArrowLeft class="h-5 w-5" />
-				</Button>
-			</div>
-		</div> -->
-
-		<!-- Main Content -->
+	<div class="min-h-screen">
 		<div class="relative z-10 mx-auto mt-4 max-w-4xl">
 			<Card class="shadow">
 				<CardContent class="px-4">

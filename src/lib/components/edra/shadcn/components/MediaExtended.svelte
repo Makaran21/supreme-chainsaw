@@ -1,21 +1,23 @@
 <script lang="ts">
+	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
+	import { cn } from '$lib/utils.js';
+	import type { NodeViewProps } from '@tiptap/core';
 	import { onDestroy, onMount, type Snippet } from 'svelte';
 	import { NodeViewWrapper } from 'svelte-tiptap';
-	import type { NodeViewProps } from '@tiptap/core';
-	import { cn } from '$lib/utils.js';
-	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 
 	import AlignCenter from '@lucide/svelte/icons/align-center';
 	import AlignLeft from '@lucide/svelte/icons/align-left';
 	import AlignRight from '@lucide/svelte/icons/align-right';
-	import EllipsisVertical from '@lucide/svelte/icons/ellipsis-vertical';
-	import CopyIcon from '@lucide/svelte/icons/copy';
-	import Fullscreen from '@lucide/svelte/icons/fullscreen';
-	import Trash from '@lucide/svelte/icons/trash';
 	import Captions from '@lucide/svelte/icons/captions';
+	import CopyIcon from '@lucide/svelte/icons/copy';
+	import EllipsisVertical from '@lucide/svelte/icons/ellipsis-vertical';
+	import Fullscreen from '@lucide/svelte/icons/fullscreen';
+	import Maximize2 from '@lucide/svelte/icons/maximize-2';
+	import Trash from '@lucide/svelte/icons/trash';
 
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { duplicateContent } from '../../utils.js';
+	import { IsMobile } from '$lib/hooks/is-mobile.svelte.js';
 
 	interface MediaExtendedProps extends NodeViewProps {
 		children: Snippet<[]>;
@@ -34,6 +36,15 @@
 
 	const minWidthPercent = 15;
 	const maxWidthPercent = 100;
+
+	// Max height presets for fitting images in editor
+	const heightPresets = [
+		{ label: 'Auto (Original)', value: null },
+		{ label: 'Small (300px)', value: '300px' },
+		{ label: 'Medium (500px)', value: '500px' },
+		{ label: 'Large (700px)', value: '700px' },
+		{ label: 'Extra Large (900px)', value: '900px' }
+	];
 
 	let nodeRef = $state<HTMLElement>();
 
@@ -137,7 +148,7 @@
  So for now, we'll re-render it when the align changes.
 -->
 
-{#key node.attrs.align}
+{#key node.attrs.align || node.attrs.height}
 	<NodeViewWrapper
 		id="resizable-container-media"
 		class={cn(
@@ -147,9 +158,11 @@
 			node.attrs.align === 'center' && 'left-1/2 -translate-x-1/2',
 			node.attrs.align === 'right' && 'left-full -translate-x-full'
 		)}
-		style={`width: ${node.attrs.width}`}
+		style={`width: ${node.attrs.width};`}
 	>
-		<div class={cn('group relative flex flex-col rounded-md', resizing && '')}>
+		<div
+			class={cn('group relative flex flex-col rounded-md', resizing && '')}
+		>
 			{@render children()}
 
 			{#if editor.isEditable}
@@ -167,7 +180,7 @@
 					}}
 				>
 					<div
-						class="bg-muted z-20 h-[70px] w-1 rounded-xl border opacity-0 transition-all group-hover:opacity-100"
+						class="z-20 h-[70px] w-1 rounded-xl border bg-muted opacity-0 transition-all group-hover:opacity-100"
 					></div>
 				</div>
 
@@ -185,12 +198,12 @@
 					}}
 				>
 					<div
-						class="bg-muted z-20 h-[70px] w-1 rounded-xl border opacity-0 transition-all group-hover:opacity-100"
+						class="z-20 h-[70px] w-1 rounded-xl border bg-muted opacity-0 transition-all group-hover:opacity-100"
 					></div>
 				</div>
 				<div
 					class={cn(
-						'bg-background/50 absolute -top-2 left-[calc(50%-3rem)] flex items-center gap-1 rounded border p-1 opacity-0 backdrop-blur-sm transition-opacity',
+						'absolute -top-2 left-[calc(50%-3rem)] flex items-center gap-1 rounded border bg-background/50 p-1 opacity-0 backdrop-blur-sm transition-opacity',
 						!resizing && 'group-hover:opacity-100',
 						openedMore && 'opacity-100'
 					)}
@@ -241,6 +254,25 @@
 							>
 								<Captions class="mr-1 size-4" /> Caption
 							</DropdownMenu.Item>
+
+							<DropdownMenu.Sub>
+								<DropdownMenu.SubTrigger>
+									<Maximize2 class="mr-1 size-4" /> Max Height
+								</DropdownMenu.SubTrigger>
+								<DropdownMenu.SubContent>
+									{#each heightPresets as preset}
+										<DropdownMenu.Item
+											onclick={() => {
+												updateAttributes({ height: preset.value });
+											}}
+											class={cn(node.attrs.height === preset.value && 'bg-muted')}
+										>
+											{preset.label}
+										</DropdownMenu.Item>
+									{/each}
+								</DropdownMenu.SubContent>
+							</DropdownMenu.Sub>
+
 							<DropdownMenu.Item
 								onclick={() => {
 									duplicateContent(editor, node);

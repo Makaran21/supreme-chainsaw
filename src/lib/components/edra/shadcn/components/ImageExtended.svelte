@@ -14,6 +14,7 @@
 		src={node.attrs.src}
 		alt={node.attrs.alt}
 		title={node.attrs.title}
-		class="m-0 object-cover"
+		class="m-0 object-cover w-full"
+		style="max-height: {node.attrs.height};"
 	/>
 </MediaExtended>
