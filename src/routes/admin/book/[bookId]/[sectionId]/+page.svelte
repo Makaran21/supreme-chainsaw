@@ -12,7 +12,7 @@
 </script>
 
 {#if mode === 'blocks'}
-	<SectionByBlocks blocks={[]} />
+	<SectionByBlocks />
 {/if}
 {#if mode === 'markdown'}
 	<SectionByMarkdown {section} />

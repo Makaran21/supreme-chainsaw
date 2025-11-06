@@ -22,6 +22,13 @@
       "when": 1762310605395,
       "tag": "0002_tricky_nightcrawler",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1762364294858,
+      "tag": "0003_empty_thunderbolt",
+      "breakpoints": true
     }
   ]
 }

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import MediaLibrary from '$lib/components/admin/MediaLibrary.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import { BookOpen, PenTool, Users } from '@lucide/svelte';
@@ -37,5 +38,6 @@
 				<Button variant="default" href="/admin/user">Go to Users</Button>
 			</CardContent>
 		</Card>
+		<MediaLibrary />
 	</div>
 </div>

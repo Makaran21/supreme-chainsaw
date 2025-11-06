@@ -29,12 +29,14 @@ export const books = sqliteTable('books', {
 	isFree: integer('is_free', { mode: 'boolean' }).notNull().default(false),
 	fakeViewers: integer('fake_viewers'),
 	fakePurchases: integer('fake_purchases'),
-	useFakeData: integer('use_fake_data', { mode: 'boolean' }).notNull().default(true),
+	useFakeData: integer('use_fake_data', { mode: 'boolean' }).notNull().default(true)
 });
 
 export const chapters = sqliteTable('chapters', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	bookId: integer('book_id').notNull().references(() => books.id),
+	bookId: integer('book_id')
+		.notNull()
+		.references(() => books.id),
 	title: text('title').notNull(),
 	orderIndex: integer('order_index').notNull(),
 	nextChapterId: integer('next_chapter_id'),
@@ -47,7 +49,6 @@ export enum BlockType {
 	IMAGE = 'image',
 	VIDEO = 'video',
 	SECTION_TITLE = 'section-title',
-	SECOND_TITLE = 'second-title'
 }
 
 export interface Block {
@@ -60,7 +61,9 @@ export interface Block {
 
 export const sections = sqliteTable('sections', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	chapterId: integer('chapter_id').notNull().references(() => chapters.id),
+	chapterId: integer('chapter_id')
+		.notNull()
+		.references(() => chapters.id),
 	title: text('title').notNull(),
 	content: text('content', { mode: 'json' }).$type<Content>().notNull(),
 	orderIndex: integer('order_index').notNull(),
@@ -72,8 +75,12 @@ export const sections = sqliteTable('sections', {
 // User book purchases
 export const userBookPurchases = sqliteTable('user_book_purchases', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	userId: text('user_id').notNull().references(() => user.id),
-	bookId: integer('book_id').notNull().references(() => books.id),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id),
+	bookId: integer('book_id')
+		.notNull()
+		.references(() => books.id),
 	purchasedAt: integer('purchased_at', { mode: 'timestamp' }).notNull(),
 	price: integer('price').notNull() // price paid at time of purchase
 });
@@ -81,8 +88,12 @@ export const userBookPurchases = sqliteTable('user_book_purchases', {
 // User reading progression
 export const userReadingProgress = sqliteTable('user_reading_progress', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	userId: text('user_id').notNull().references(() => user.id),
-	bookId: integer('book_id').notNull().references(() => books.id),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id),
+	bookId: integer('book_id')
+		.notNull()
+		.references(() => books.id),
 	chapterId: integer('chapter_id').references(() => chapters.id),
 	sectionId: integer('section_id').references(() => sections.id),
 	progressPercentage: integer('progress_percentage').notNull().default(0), // 0-100
@@ -94,7 +105,9 @@ export const userReadingProgress = sqliteTable('user_reading_progress', {
 // Blog posts
 export const blogPosts = sqliteTable('blog_posts', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	authorId: text('author_id').notNull().references(() => user.id),
+	authorId: text('author_id')
+		.notNull()
+		.references(() => user.id),
 	authorName: text('author_name'),
 	title: text('title').notNull(),
 	category: text('category').notNull(),
@@ -126,8 +139,12 @@ export const commentSections = sqliteTable('comment_sections', {
 // Comments
 export const comments = sqliteTable('comments', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	commentSectionId: integer('comment_section_id').notNull().references(() => commentSections.id),
-	userId: text('user_id').notNull().references(() => user.id),
+	commentSectionId: integer('comment_section_id')
+		.notNull()
+		.references(() => commentSections.id),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id),
 	parentCommentId: integer('parent_comment_id'), // for nested replies
 	content: text('content').notNull(),
 	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
@@ -138,7 +155,9 @@ export const comments = sqliteTable('comments', {
 // Reader activity log - tracks detailed reading behavior and time spent
 export const readerActivityLog = sqliteTable('reader_activity_log', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	userId: text('user_id').notNull().references(() => user.id),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id),
 	sectionId: integer('section_id').references(() => sections.id),
 	blogPostId: integer('blog_post_id').references(() => blogPosts.id),
 	sessionId: text('session_id').notNull(), // groups activities in same reading session
@@ -154,6 +173,19 @@ export const readerActivityLog = sqliteTable('reader_activity_log', {
 	exitedEarly: integer('exited_early', { mode: 'boolean' }).notNull().default(false), // left before finishing
 	returnVisit: integer('return_visit', { mode: 'boolean' }).notNull().default(false), // came back to same content
 	createdAt: integer('created_at', { mode: 'timestamp' }).notNull()
+});
+
+export const media = sqliteTable('media', {
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	name: text('name').notNull(),
+	originalName: text('original_name').notNull(),
+	type: text('type').notNull(), // image/jpeg, video/mp4, audio/mpeg, application/pdf
+	size: integer('size').notNull(), // bytes
+	url: text('url').notNull(), // local path: /uploads/filename.jpg (easy to swap to S3/GCP URL)
+	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
 });
 
 // Relations
@@ -263,7 +295,6 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
 	replies: many(comments)
 }));
 
-
 // Basic table types (without relations)
 export type Book = typeof books.$inferSelect;
 export type BookInsert = typeof books.$inferInsert;
@@ -286,6 +317,8 @@ export type Comment = typeof comments.$inferSelect;
 export type CommentInsert = typeof comments.$inferInsert;
 export type ReaderActivityLog = typeof readerActivityLog.$inferSelect;
 export type ReaderActivityLogInsert = typeof readerActivityLog.$inferInsert;
+export type Media = typeof media.$inferSelect;
+export type NewMedia = typeof media.$inferInsert;
 
 // Relation types - use these when you query with relations included
 export type UserWithRelations = User & {

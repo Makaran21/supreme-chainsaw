@@ -23,8 +23,6 @@
         <BlockImage {block} />
       {:else if block.type === "video"}
         <BlockVideo {block} />
-      {:else if block.type === "second-title"}
-        <BlockSecondTitle {block} />
       {:else if block.type === "section-title"}
         <BlockSectionTitle {block} />
       {/if}
