@@ -20,14 +20,14 @@
 	</div>
 
 	<div>
-		<div class="min-h-[calc(100vh-6rem)] px-6 pt-14 pb-12">
+		<div class="min-h-[calc(100vh-6rem)] px-6 pt-14 pb-12 max-w-7xl mx-auto">
 			<slot></slot>
 		</div>
 		<div class="relative flex w-full justify-end">
 			<div
 				class="absolute bottom-4 left-0 flex w-[65%] items-center justify-end gap-2
         pl-2 sm:pl-4 md:pl-4 lg:pl-4"
-			>
+		>
 				<div class="relative h-3 grow overflow-hidden bg-[#280274]">
 					<div class="absolute top-[4.2px] left-0 h-[3px] w-[85%] bg-[#e1a730]"></div>
 				</div>

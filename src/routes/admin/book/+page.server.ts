@@ -39,6 +39,7 @@ export const actions: Actions = {
             await updateBook(bookId, bookData);
             return { success: true };
         } catch (error) {
+            console.error(error)
             return fail(500, { message: 'Failed to update book' });
         }
     },
@@ -66,6 +67,7 @@ export const actions: Actions = {
             await createBook(bookData);
             return { success: true };
         } catch (error) {
+            console.error(error)
             return fail(500, { message: 'Failed to create book' });
         }
     }

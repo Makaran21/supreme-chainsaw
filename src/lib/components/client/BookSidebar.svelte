@@ -130,9 +130,9 @@
 							No results found for "{debouncedSearchQuery}"
 						</div>
 					{:else}
-						<div class="space-y-1">
+						<div>
 							{#each filteredChapters as chapter, index (chapter.id)}
-								<div class="rounded border p-1 py-2">
+								<div class="rounded border p-1 py-2 mb-1">
 									<Sidebar.MenuItem>
 										<div class="flex w-full items-center">
 											<Sidebar.MenuButton class="flex-1" aria-disabled={index >= 4}>

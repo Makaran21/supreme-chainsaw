@@ -10,7 +10,7 @@
 
 <!-- /routes/book/[bookId]/+page.svelte -->
 
-<div class="flex w-full items-center justify-end border-b border-gray-200 bg-background/80 px-2 py-2 backdrop-blur-sm">
+<div class="flex w-full items-center justify-between border-b border-gray-200 bg-background/80 px-2 py-2 backdrop-blur-sm">
 	<ToggleSidebar hideWhenOpen class="font-semibold text-lg text-foreground/80" />
 	<Button href="/" variant="link" class="text-black">
 		<ArrowLeft />

@@ -2,21 +2,30 @@ import type { Content } from '@tiptap/core';
 import { randomUUID } from 'crypto';
 import { count, countDistinct, eq } from 'drizzle-orm';
 import { db } from '../db';
-import { books, chapters, sections, userBookPurchases, userReadingProgress, type Block, type BookInsert, type Chapter, type Section } from '../db/schema';
+import {
+	books,
+	chapters,
+	sections,
+	userBookPurchases,
+	userReadingProgress,
+	type Block,
+	type BookInsert,
+	type Chapter,
+	type Section
+} from '../db/schema';
 
 export type BookWithContent = Awaited<ReturnType<typeof getBookWithContent>>;
 
-export type OrderedChapterWithSections = { chapterId: number, sectionIds: number[] }
+export type OrderedChapterWithSections = { chapterId: number; sectionIds: number[] };
 
-export type ChapterWithSections = Chapter & { sections: Section[] }
+export type ChapterWithSections = Chapter & { sections: Section[] };
 
 export type BookDataOperation = {
 	dataType: 'CHAPTER' | 'SECTION';
 	action: 'CREATE' | 'DELETE' | 'RENAME' | 'MOVE';
 	section?: Section;
 	chapter?: Chapter;
-}
-
+};
 
 export async function getBookWithContent(bookId: number) {
 	const book = await db.query.books.findFirst({
@@ -35,7 +44,7 @@ export async function getBookWithContent(bookId: number) {
 
 	if (!book) throw Error(`Book [ID: ${bookId}] not found`);
 
-	const { purchases, viewers } = await getBookViewersAndPurchases(bookId)
+	const { purchases, viewers } = await getBookViewersAndPurchases(bookId);
 
 	return {
 		...book,
@@ -53,7 +62,7 @@ export async function getBookViewersAndPurchases(bookId: number) {
 	return {
 		purchases,
 		viewers
-	}
+	};
 }
 
 export async function getBookPurchaseCount(bookId: number): Promise<number> {
@@ -89,7 +98,7 @@ export async function getAllBooksForHomePage() {
 		}
 	});
 
-	return booksWithProgress.map(book => {
+	return booksWithProgress.map((book) => {
 		const progressEntry = book.readingProgress[0];
 		const progress = progressEntry ? progressEntry : null;
 
@@ -109,14 +118,14 @@ export async function getAllBooksForAdminPage() {
 			id: item.id ?? randomUUID(),
 			viewers: 0,
 			purchases: 0
-		}
-	})
+		};
+	});
 }
 
 export async function updateBook(bookId: number, data: BookInsert) {
 	const [updatedBook] = await db
 		.update(books)
-		.set(data)
+		.set({ ...data, coverImage: data.coverImage ? new URL(data.coverImage).pathname : null })
 		.where(eq(books.id, bookId))
 		.returning();
 
@@ -126,7 +135,7 @@ export async function updateBook(bookId: number, data: BookInsert) {
 export async function createBook(data: BookInsert) {
 	const [newBook] = await db
 		.insert(books)
-		.values(data)
+		.values({ ...data, coverImage: data.coverImage ? new URL(data.coverImage).pathname : null })
 		.returning();
 
 	return newBook;
@@ -141,64 +150,58 @@ export async function getChaptersWithSectionByBookId(bookId: number) {
 				orderBy: (sections, { asc }) => [asc(sections.orderIndex)]
 			}
 		}
-	})
-	return bookChapters
+	});
+	return bookChapters;
 }
 
 export async function addChapter(data: Chapter) {
-	const [chapter] = await db
-		.insert(chapters)
-		.values(data)
-		.returning();
+	const [chapter] = await db.insert(chapters).values(data).returning();
 
 	return chapter;
 }
 
 // Add multiple chapters
-export async function addChapters(chapterList: Array<{
-	bookId: number;
-	title: string;
-	orderIndex: number;
-	nextChapterId?: number;
-}>) {
-	const insertedChapters = await db
-		.insert(chapters)
-		.values(chapterList)
-		.returning();
+export async function addChapters(
+	chapterList: Array<{
+		bookId: number;
+		title: string;
+		orderIndex: number;
+		nextChapterId?: number;
+	}>
+) {
+	const insertedChapters = await db.insert(chapters).values(chapterList).returning();
 
 	return insertedChapters;
 }
 
 // Add section
 export async function addSection(data: Section) {
-	const { id, ...fields } = data
-	const [section] = await db
-		.insert(sections)
-		.values(fields)
-		.returning();
+	const { id, ...fields } = data;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const _unused = id
+	const [section] = await db.insert(sections).values(fields).returning();
 
 	return section;
 }
 
 export async function getSectionById(id: number): Promise<Section> {
-	const section = await db.query.sections.findFirst({ where: eq(sections.id, id) })
-	if (!section) throw Error(`Section [ID: ${id}] not found`)
-	return section
+	const section = await db.query.sections.findFirst({ where: eq(sections.id, id) });
+	if (!section) throw Error(`Section [ID: ${id}] not found`);
+	return section;
 }
 
 // Add multiple sections
-export async function addSections(sectionList: Array<{
-	chapterId: number;
-	title: string;
-	content: string;
-	orderIndex: number;
-	nextSectionId?: number;
-	blocks?: Block[];
-}>) {
-	const insertedSections = await db
-		.insert(sections)
-		.values(sectionList)
-		.returning();
+export async function addSections(
+	sectionList: Array<{
+		chapterId: number;
+		title: string;
+		content: string;
+		orderIndex: number;
+		nextSectionId?: number;
+		blocks?: Block[];
+	}>
+) {
+	const insertedSections = await db.insert(sections).values(sectionList).returning();
 
 	return insertedSections;
 }
@@ -208,7 +211,7 @@ export function findToUpdatesChapter(
 	chapterIds: OrderedChapterWithSections[]
 ) {
 	const currentOrderMap = new Map<number, ChapterWithSections>();
-	chaptersByBookId.forEach(chapter => {
+	chaptersByBookId.forEach((chapter) => {
 		if (!chapter.id) return;
 		currentOrderMap.set(chapter.id, chapter);
 	});
@@ -221,10 +224,7 @@ export function findToUpdatesChapter(
 		const currentChapter = currentOrderMap.get(chapterId);
 		if (!currentChapter) return;
 
-		if (
-			currentChapter.orderIndex !== undefined &&
-			currentChapter.orderIndex !== newChapterIndex
-		) {
+		if (currentChapter.orderIndex !== undefined && currentChapter.orderIndex !== newChapterIndex) {
 			chaptersToUpdates.push({
 				id: chapterId,
 				orderIndex: newChapterIndex
@@ -235,7 +235,7 @@ export function findToUpdatesChapter(
 		const newSectionIds = chapter.sectionIds || [];
 
 		newSectionIds.forEach((sectionId, newSectionIndex) => {
-			const currentSection = currentSections.find(s => s.id === sectionId);
+			const currentSection = currentSections.find((s) => s.id === sectionId);
 			if (!currentSection) return;
 
 			if (
@@ -256,14 +256,19 @@ export function findToUpdatesChapter(
 	};
 }
 
-export async function updateSectionsOrders(sectionOrders: {
-	id: number;
-	orderIndex: number;
-}[]) {
-	const updatesMap = sectionOrders.reduce((acc, { id, orderIndex }) => {
-		acc[id] = orderIndex;
-		return acc;
-	}, {} as Record<number, number>);
+export async function updateSectionsOrders(
+	sectionOrders: {
+		id: number;
+		orderIndex: number;
+	}[]
+) {
+	const updatesMap = sectionOrders.reduce(
+		(acc, { id, orderIndex }) => {
+			acc[id] = orderIndex;
+			return acc;
+		},
+		{} as Record<number, number>
+	);
 
 	const cases = Object.entries(updatesMap)
 		.map(([id, idx]) => `WHEN ${id} THEN ${idx}`)
@@ -277,14 +282,19 @@ export async function updateSectionsOrders(sectionOrders: {
 		WHERE id IN (${ids});
 	`);
 }
-export async function updateChapterOrders(chapterOrders: {
-	id: number;
-	orderIndex: number;
-}[]) {
-	const updatesMap = chapterOrders.reduce((acc, { id, orderIndex }) => {
-		acc[id] = orderIndex;
-		return acc;
-	}, {} as Record<number, number>);
+export async function updateChapterOrders(
+	chapterOrders: {
+		id: number;
+		orderIndex: number;
+	}[]
+) {
+	const updatesMap = chapterOrders.reduce(
+		(acc, { id, orderIndex }) => {
+			acc[id] = orderIndex;
+			return acc;
+		},
+		{} as Record<number, number>
+	);
 
 	const cases = Object.entries(updatesMap)
 		.map(([id, idx]) => `WHEN ${id} THEN ${idx}`)
@@ -299,13 +309,16 @@ export async function updateChapterOrders(chapterOrders: {
 	`);
 }
 
-export async function reorderChapterAndSection(bookId: number, chapterAndSectionsIds: OrderedChapterWithSections[]) {
-	const chaptersByBookId = await getChaptersWithSectionByBookId(bookId)
+export async function reorderChapterAndSection(
+	bookId: number,
+	chapterAndSectionsIds: OrderedChapterWithSections[]
+) {
+	const chaptersByBookId = await getChaptersWithSectionByBookId(bookId);
 
-	const newReorderChapter = findToUpdatesChapter(chaptersByBookId, chapterAndSectionsIds)
+	const newReorderChapter = findToUpdatesChapter(chaptersByBookId, chapterAndSectionsIds);
 
-	if (newReorderChapter.sections.length) await updateSectionsOrders(newReorderChapter.sections)
-	if (newReorderChapter.chapters.length) await updateChapterOrders(newReorderChapter.chapters)
+	if (newReorderChapter.sections.length) await updateSectionsOrders(newReorderChapter.sections);
+	if (newReorderChapter.chapters.length) await updateChapterOrders(newReorderChapter.chapters);
 }
 
 export async function renameSection(section: Section) {
@@ -322,7 +335,6 @@ export async function renameSection(section: Section) {
 	}
 
 	return result[0];
-
 }
 export async function updateSectionContent(sectionId: number, content: Content) {
 	const result = await db
@@ -367,7 +379,6 @@ export async function deleteSection(section: Section) {
 	}
 
 	return result[0];
-
 }
 
 export async function deleteChapter(chapter: Chapter) {
@@ -376,14 +387,13 @@ export async function deleteChapter(chapter: Chapter) {
 	const result = await db
 		.delete(chapters)
 		.where(eq(chapters.id, chapter.id))
-		.returning({ id: chapters.id, });
+		.returning({ id: chapters.id });
 
 	if (result.length === 0) {
 		throw new Error(`Chapter with id ${chapter.id} not found`);
 	}
 
 	return result[0];
-
 }
 
 export async function changeSectionChapterId(section: Section) {
@@ -391,7 +401,7 @@ export async function changeSectionChapterId(section: Section) {
 
 	const result = await db
 		.update(sections)
-		.set({ chapterId: section.chapterId, })
+		.set({ chapterId: section.chapterId })
 		.where(eq(sections.id, section.id))
 		.returning({ id: sections.id, title: sections.title });
 
@@ -400,34 +410,41 @@ export async function changeSectionChapterId(section: Section) {
 	}
 
 	return result[0];
-
 }
 
-export async function sectionOperationHandler(action: BookDataOperation['action'], section: Section) {
-	if (action === 'RENAME') return renameSection(section)
-	if (action === 'DELETE') return deleteSection(section)
-	if (action === 'CREATE') return addSection(section)
-	if (action === 'MOVE') return changeSectionChapterId(section)
+export async function sectionOperationHandler(
+	action: BookDataOperation['action'],
+	section: Section
+) {
+	if (action === 'RENAME') return renameSection(section);
+	if (action === 'DELETE') return deleteSection(section);
+	if (action === 'CREATE') return addSection(section);
+	if (action === 'MOVE') return changeSectionChapterId(section);
 }
 
-export async function chapterOperationHandler(action: BookDataOperation['action'], chapter: Chapter) {
-	if (action === 'RENAME') return renameChapter(chapter)
-	if (action === 'DELETE') return deleteChapter(chapter)
-	if (action === 'CREATE') return addChapter(chapter)
+export async function chapterOperationHandler(
+	action: BookDataOperation['action'],
+	chapter: Chapter
+) {
+	if (action === 'RENAME') return renameChapter(chapter);
+	if (action === 'DELETE') return deleteChapter(chapter);
+	if (action === 'CREATE') return addChapter(chapter);
 }
 
 export async function bookDataOperationHandler(operations: BookDataOperation[]) {
-	await Promise.all(operations.map(async (operation) => {
-		if (operation.dataType === 'SECTION') {
-			if (!operation.section) return null
-			await sectionOperationHandler(operation.action, operation.section)
-			return
-		}
+	await Promise.all(
+		operations.map(async (operation) => {
+			if (operation.dataType === 'SECTION') {
+				if (!operation.section) return null;
+				await sectionOperationHandler(operation.action, operation.section);
+				return;
+			}
 
-		if (operation.dataType === 'CHAPTER') {
-			if (!operation.chapter) return null
-			await chapterOperationHandler(operation.action, operation.chapter)
-			return
-		}
-	}))
+			if (operation.dataType === 'CHAPTER') {
+				if (!operation.chapter) return null;
+				await chapterOperationHandler(operation.action, operation.chapter);
+				return;
+			}
+		})
+	);
 }

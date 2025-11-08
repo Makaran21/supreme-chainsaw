@@ -171,7 +171,7 @@
 	}
 
 	async function copyLink(url: string, id: string) {
-		await navigator.clipboard.writeText(window.location.origin + url);
+		await navigator.clipboard.writeText(url);
 		copiedId = id;
 		setTimeout(() => (copiedId = null), 2000);
 	}

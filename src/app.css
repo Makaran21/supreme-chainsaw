@@ -202,7 +202,7 @@ body {
 }
 
 .pattern-bg {
-  background-image: radial-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(0, 0, 0, 0.05) 1.5px, transparent 1.5px);
   background-size: 20px 20px;
   background-attachment: fixed;
 }

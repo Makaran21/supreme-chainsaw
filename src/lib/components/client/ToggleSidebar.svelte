@@ -3,7 +3,6 @@
 	import { useSidebar } from '$lib/components/ui/sidebar/context.svelte.js';
 	import { cn } from '$lib/utils.js';
 	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
-	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import PanelLeft from '@lucide/svelte/icons/panel-left';
 	import type { ComponentProps } from 'svelte';
 
@@ -19,7 +18,7 @@
 	} = $props();
 
 	const sidebar = useSidebar();
-	const isOpen = $derived(sidebar.isMobile ? sidebar.openMobile : sidebar.open);
+	const isOpen = $derived(sidebar?.isMobile ? sidebar?.openMobile : sidebar?.open);
 </script>
 
 {#if !(hideWhenOpen && isOpen)}
@@ -31,8 +30,7 @@
 			size="icon"
 			class={cn('size-8 cursor-pointer', className)}
 			type="button"
-			onclick={(e) => {
-				onclick?.(e);
+			onclick={() => {
 				sidebar.toggle();
 			}}
 			{...restProps}
