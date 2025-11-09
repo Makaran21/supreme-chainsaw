@@ -17,49 +17,15 @@
 		Send
 	} from '@lucide/svelte';
 	import HomePageLayout from '$lib/components/client/HomePageLayout.svelte';
+	import { EdraEditor } from '$lib/components/edra/shadcn';
+
+	export let data;
+
+	const blogPost = data.blogPost;
 
 	// Mock blog post data
 	let post = {
-		id: 1,
-		title: '10 Tips for Writing Clean Code',
-		slug: '10-tips-for-writing-clean-code',
-		excerpt:
-			'Learn the most important principles for writing maintainable code that your team will love.',
-		content: `
-			<h2>Introduction</h2>
-			<p>Clean code is essential for maintainability and team collaboration. Here are my top tips for writing code that others (and future you) will thank you for.</p>
-			
-			<h2>1. Use Meaningful Names</h2>
-			<p>Variable and function names should reveal intent. Avoid single letters and abbreviations unless they are universally understood. A good name can eliminate the need for comments.</p>
-			
-			<h2>2. Keep Functions Small</h2>
-			<p>A function should do one thing and do it well. If you need a comment to explain what a section does, extract it into a separate function. Aim for functions that fit on your screen without scrolling.</p>
-			
-			<h2>3. Write Self-Documenting Code</h2>
-			<p>Your code should be readable like prose. Use descriptive variable names, clear function signatures, and logical organization. Comments should explain "why" not "what".</p>
-			
-			<h2>4. Follow Consistent Formatting</h2>
-			<p>Consistency is key. Use a linter and formatter to maintain uniform style across your codebase. This makes code predictable and easier to scan.</p>
-			
-			<h2>5. Avoid Deep Nesting</h2>
-			<p>Deeply nested code is hard to follow. Use early returns, extract methods, and guard clauses to keep nesting shallow. Your code should flow linearly when possible.</p>
-			
-			<h2>Conclusion</h2>
-			<p>Writing clean code is a skill that improves with practice. Start applying these principles today, and your future self will thank you!</p>
-		`,
-		coverImage: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1200',
-		category: 'Programming',
-		readTime: 8,
-		publishedAt: new Date('2024-11-01'),
-		tags: ['programming', 'clean-code', 'best-practices'],
-		author: {
-			id: 'user_1',
-			name: 'John Doe',
-			username: 'johndoe',
-			avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John'
-		},
-		useFakeData: true,
-		fakeViewers: 15420,
+		...data.blogPost,
 		stats: {
 			views: 15420,
 			likes: 342,
@@ -157,7 +123,7 @@
 		if (navigator.share) {
 			navigator.share({
 				title: post.title,
-				text: post.excerpt,
+				text: post.excerpt || '',
 				url: window.location.href
 			});
 		} else {
@@ -247,14 +213,16 @@
 					<div class="mb-8 flex items-center justify-between">
 						<div class="flex items-center gap-3">
 							<Avatar class="h-12 w-12">
-								<AvatarImage src={post.author.avatar} alt={post.author.name} />
-								<AvatarFallback>{getInitials(post.author.name)}</AvatarFallback>
+								<!-- <AvatarImage src={post.author} alt={post.authorName} /> -->
+								<AvatarFallback>{getInitials(post.authorName ?? 'A')}</AvatarFallback>
 							</Avatar>
 							<div>
-								<p class="font-semibold">{post.author.name}</p>
+								<p class="font-semibold">{post.authorName || 'Admin'}</p>
 								<div class="flex items-center gap-2 text-sm text-muted-foreground">
 									<Calendar class="h-3.5 w-3.5" />
-									<span>{formatDate(post.publishedAt)}</span>
+									{#if post.publishedAt}
+										<span>{formatDate(post.publishedAt)}</span>
+									{/if}
 								</div>
 							</div>
 						</div>
@@ -286,9 +254,10 @@
 					<Separator class="mb-8" />
 
 					<!-- Article Content -->
-					<article class="prose prose-lg mb-12 max-w-none px-2">
-						{@html post.content}
-					</article>
+					<!-- <article class="prose prose-lg mb-12 max-w-none px-2"> -->
+						<!-- {@html post.content} -->
+						<EdraEditor content={post.content} editable={false} class="prose prose-slate max-w-none" />
+					<!-- </article> -->
 
 					<!-- Tags -->
 					<div class="mb-8 flex flex-wrap gap-2">

@@ -4,7 +4,7 @@
 	import type { BooksForHomePage } from '../../../routes/+page.server';
 
 	export let book: BooksForHomePage[number];
-	export let href: string = `/book/${book.id}`; // Allow customizable href
+	export let href: string = `/book/${book.id}`;
 
 	let isHovered = false;
 
@@ -12,12 +12,12 @@
 		reading: {
 			icon: Clock,
 			label: 'Reading',
-			color: 'bg-secondary/10 text-secondary'
+			color: 'bg-blue-500/10 text-blue-600'
 		},
 		completed: {
 			icon: CheckCircle,
 			label: 'Completed',
-			color: 'bg-accent/10 text-accent'
+			color: 'bg-emerald-500/10 text-emerald-600'
 		}
 	};
 
@@ -26,7 +26,7 @@
 
 <a
 	{href}
-	class="shadow-xs group sanimate-[fadeIn_0.2s_ease-out] block cursor-pointer overflow-hidden rounded-xl border border-border bg-card duration-200 hover:-translate-y-0.5 hover:shadow-md"
+	class="group block animate-[fadeIn_0.2s_ease-out] cursor-pointer overflow-hidden rounded-xl border border-border bg-card shadow-xs duration-200 hover:-translate-y-0.5 hover:shadow-md"
 	onmouseenter={() => (isHovered = true)}
 	onmouseleave={() => (isHovered = false)}
 	aria-label="View details for {book.title}"
@@ -35,16 +35,18 @@
 		<img
 			src={book.coverImage || '/placeholder.svg'}
 			alt={book.title}
-			class="h-[280px] w-full object-cover duration-300 ease-out group-hover:scale-110"
+			class="h-60 w-full object-cover duration-300 ease-out group-hover:scale-110 sm:h-[280px]"
 		/>
 
+		<!-- Status Badge -->
 		<div
-			class="absolute top-4 left-4 {config.color} flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold backdrop-blur-sm"
+			class="absolute top-3 left-3 flex items-center gap-1.5 rounded-lg bg-linear-to-r from-black/80 to-gray-800/80 px-3 py-1.5 text-xs font-bold text-white backdrop-blur-sm"
 		>
-			<config.icon class="h-4 w-4" />
-			<span>{config.label}</span>
+			<config.icon class="h-3.5 w-3.5" />
+			<span class="mt-0.5">{config.label}</span>
 		</div>
 
+		<!-- Progress Bar -->
 		{#if book.readingProgress && !book.readingProgress.completedAt}
 			<div class="absolute right-0 bottom-0 left-0 h-1 bg-gray-300">
 				<div
@@ -55,26 +57,39 @@
 		{/if}
 	</div>
 
-	<div class="space-y-3 p-6">
-		<h3
-			class="text-lg leading-tight font-black text-foreground duration-200 group-hover:text-primary"
-		>
-			{book.title}
-		</h3>
+	<div class="p-4 sm:p-5">
+		<!-- Title -->
+		<div class="mb-2 w-full h-12">
+			<h3
+				class=" line-clamp-2 text-base leading-tight font-black text-foreground duration-200 group-hover:text-primary sm:text-lg"
+			>
+				{book.title}
+			</h3>
+		</div>
 
-		<p class="text-sm font-bold opacity-75">
-			<!-- {book.anthor} -->
-			Khieu Vicheanon
-		</p>
+		<!-- Author -->
+		<p class="mb-2 text-sm font-bold text-foreground/70">Khieu Vicheanon</p>
 
-		<p class="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+		<!-- Description -->
+		<p class="mb-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
 			{book.description}
 		</p>
 
-		<!-- Progress display -->
+		<!-- Progress Info -->
 		{#if book.readingProgress && !book.readingProgress.completedAt}
-			<div class="border-t border-border pt-3 text-xs font-bold text-primary">
-				{book.readingProgress.progressPercentage}% read
+			<div class="flex items-center justify-between border-t border-border pt-3 text-xs">
+				<span class="font-bold text-primary">
+					{book.readingProgress.progressPercentage}% complete
+				</span>
+				<span class="font-semibold text-muted-foreground"> Page 122 of 245 </span>
+			</div>
+		{:else if book.readingProgress?.completedAt}
+			<div class="border-t border-border pt-3 text-xs font-semibold text-emerald-600">
+				Finished · 245 pages
+			</div>
+		{:else}
+			<div class="border-t border-border pt-3 text-xs font-semibold text-muted-foreground">
+				245 pages
 			</div>
 		{/if}
 	</div>

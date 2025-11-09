@@ -33,7 +33,7 @@
 <section class="mx-auto max-w-7xl border-t border-border px-6 py-16 sm:py-20">
 	<div class="mb-12">
 		<h3 class="mb-4 text-5xl font-black">មតិយោបល់ពីអ្នកប្រើប្រាស់</h3>
-		<div class="h-1.5 w-20 rounded-full bg-gradient-to-r from-accent to-secondary"></div>
+		<div class="h-1.5 w-20 rounded-full bg-linear-to-r from-primary to-accent"></div>
 	</div>
 
 	<div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
